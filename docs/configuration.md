@@ -166,7 +166,7 @@ The plugin also accepts parameters directly in `pom.xml`:
 <plugin>
     <groupId>io.github.arvindand</groupId>
     <artifactId>mcp-scaffold-maven-plugin</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.1</version>
     <configuration>
         <configFile>${project.basedir}/custom-config.yaml</configFile>
         <outputDirectory>${project.build.directory}/generated-sources/mcp</outputDirectory>
