@@ -1,0 +1,47 @@
+mcp:
+  scaffold:
+    scan:
+      packages:
+        - com.example.petclinic.repository
+        - com.example.petclinic.service
+
+    filter:
+      include-patterns:
+        - "*Repository"
+        - "*Service"
+      exclude-patterns:
+        - "*Internal*"
+        - "*Test*"
+      exclude-methods:
+        - flush
+        - clear
+        - saveAndFlush
+
+    descriptions:
+      include-javadoc: true
+      include-entity-fields: true
+      include-enum-values: true
+      include-constraints: true
+      parse-method-names: true
+
+    output:
+      directory: target/generated-sources/mcp
+      package-suffix: .mcp
+      class-suffix: McpTools
+
+    naming:
+      style: SNAKE_CASE
+      include-entity-name: true
+
+    read-only:
+      detect-automatically: true
+
+    # Annotation configuration - customize if using different annotation library
+    # These are the defaults (Spring AI Community MCP annotations):
+    # annotations:
+    #   tool-annotation: org.springaicommunity.mcp.annotation.McpTool
+    #   param-annotation: org.springaicommunity.mcp.annotation.McpToolParam
+    #   tool-name-attribute: name
+    #   tool-description-attribute: description
+    #   param-description-attribute: description
+    #   param-required-attribute: required
