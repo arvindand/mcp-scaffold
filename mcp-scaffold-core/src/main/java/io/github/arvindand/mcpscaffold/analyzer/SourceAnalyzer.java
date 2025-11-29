@@ -29,6 +29,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -36,6 +37,8 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.javadoc.Javadoc;
+import com.github.javaparser.javadoc.JavadocBlockTag;
 
 import io.github.arvindand.mcpscaffold.config.FilterConfig;
 import io.github.arvindand.mcpscaffold.model.ComponentInfo;
@@ -252,9 +255,25 @@ public class SourceAnalyzer {
       return importMap.get(typeName);
     }
 
+    // Check if it exists in current package
+    if (fileExists(currentPackage, typeName)) {
+      return currentPackage + "." + typeName;
+    }
+
     // Assume it's in the model package relative to current
     String modelPackage = toModelPackage(currentPackage);
     return modelPackage + "." + typeName;
+  }
+
+  private boolean fileExists(String packageName, String simpleName) {
+    for (Path sourceRoot : sourceRoots) {
+      Path path =
+          sourceRoot.resolve(packageName.replace('.', '/')).resolve(simpleName + JAVA_EXTENSION);
+      if (Files.exists(path)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private boolean isPrimitiveType(String typeName) {
@@ -344,21 +363,39 @@ public class SourceAnalyzer {
   private MethodInfo extractMethodInfo(
       MethodDeclaration method, Map<String, String> importMap, String currentPackage) {
     String name = method.getNameAsString();
-    Optional<String> javadoc = method.getJavadoc().map(jd -> jd.getDescription().toText());
+    Optional<Javadoc> javadocObj = method.getJavadoc();
+    Optional<String> javadocText = javadocObj.map(jd -> jd.getDescription().toText());
+
+    Map<String, String> paramDescriptions = new HashMap<>();
+    javadocObj.ifPresent(
+        jd ->
+            jd.getBlockTags().stream()
+                .filter(t -> t.getType() == JavadocBlockTag.Type.PARAM)
+                .forEach(
+                    t ->
+                        t.getName()
+                            .ifPresent(n -> paramDescriptions.put(n, t.getContent().toText()))));
+
     String returnType = resolveFullType(method.getType(), importMap, currentPackage);
     List<ParamInfo> parameters =
         method.getParameters().stream()
-            .map(p -> extractParamInfo(p, importMap, currentPackage))
+            .map(
+                p ->
+                    extractParamInfo(
+                        p, importMap, currentPackage, paramDescriptions.get(p.getNameAsString())))
             .toList();
     List<String> annotations =
         method.getAnnotations().stream().map(a -> a.getNameAsString()).toList();
 
     // Read-only detection will be done separately
-    return new MethodInfo(name, javadoc, returnType, parameters, false, annotations);
+    return new MethodInfo(name, javadocText, returnType, parameters, false, annotations);
   }
 
   private ParamInfo extractParamInfo(
-      Parameter param, Map<String, String> importMap, String currentPackage) {
+      Parameter param,
+      Map<String, String> importMap,
+      String currentPackage,
+      String javadocDescription) {
     String name = param.getNameAsString();
     String type = resolveFullType(param.getType(), importMap, currentPackage);
     boolean nullable =
@@ -370,8 +407,52 @@ public class SourceAnalyzer {
             .map(Object::toString)
             .toList();
 
-    // Javadoc description would need to be extracted from method's @param tag
-    return new ParamInfo(name, type, nullable, constraints, Optional.empty(), List.of());
+    List<String> enumValues =
+        resolveEnumValues(param.getType().asString(), importMap, currentPackage);
+
+    return new ParamInfo(
+        name, type, nullable, constraints, Optional.ofNullable(javadocDescription), enumValues);
+  }
+
+  private List<String> resolveEnumValues(
+      String typeName, Map<String, String> importMap, String currentPackage) {
+    String resolvedName = resolveTypeName(typeName, importMap, currentPackage);
+
+    // If it's a java.* type, we skip it
+    if (resolvedName.startsWith("java.")) {
+      return List.of();
+    }
+
+    String simpleName =
+        resolvedName.contains(".")
+            ? resolvedName.substring(resolvedName.lastIndexOf('.') + 1)
+            : resolvedName;
+    String packageName =
+        resolvedName.contains(".") ? resolvedName.substring(0, resolvedName.lastIndexOf('.')) : "";
+
+    for (Path sourceRoot : sourceRoots) {
+      Path filePath =
+          sourceRoot.resolve(packageName.replace('.', '/')).resolve(simpleName + JAVA_EXTENSION);
+      if (Files.exists(filePath)) {
+        try {
+          ParseResult<CompilationUnit> result = parser.parse(filePath);
+          if (result.isSuccessful()) {
+            return result
+                .getResult()
+                .flatMap(cu -> cu.getEnumByName(simpleName))
+                .map(
+                    enumDecl ->
+                        enumDecl.getEntries().stream()
+                            .map(entry -> entry.getNameAsString())
+                            .toList())
+                .orElse(List.of());
+          }
+        } catch (IOException e) {
+          // Ignore
+        }
+      }
+    }
+    return List.of();
   }
 
   /** Resolves a JavaParser Type to a fully qualified type string. */
@@ -453,8 +534,7 @@ public class SourceAnalyzer {
 
     // Try to find the entity type from extended types like JpaRepository<User, Long>
     for (ClassOrInterfaceType extended : classDecl.getExtendedTypes()) {
-      Optional<com.github.javaparser.ast.NodeList<com.github.javaparser.ast.type.Type>> typeArgs =
-          extended.getTypeArguments();
+      Optional<NodeList<Type>> typeArgs = extended.getTypeArguments();
       if (typeArgs.isPresent() && !typeArgs.get().isEmpty()) {
         String entityTypeName = typeArgs.get().get(0).asString();
 

@@ -59,22 +59,26 @@
         <!-- Spring AI Community MCP Annotations -->
         <mcp-annotations.version>0.7.0</mcp-annotations.version>
 
+        <!-- Spring Framework (aligned with Spring Boot 3.5.8) -->
+        <spring-framework.version>6.2.14</spring-framework.version>
+
         <!-- Testing -->
         <junit.version>5.12.2</junit.version>
         <assertj.version>3.27.6</assertj.version>
         <mockito.version>5.18.0</mockito.version>
 
         <!-- Build plugins -->
-        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <spotless-maven-plugin.version>2.44.5</spotless-maven-plugin.version>
+        <maven-invoker-plugin.version>3.9.1</maven-invoker-plugin.version>
+        <spotless-maven-plugin.version>3.1.0</spotless-maven-plugin.version>
         <google-java-format.version>1.32.0</google-java-format.version>
 
         <!-- Publishing plugins -->
-        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
-        <central-publishing-plugin.version>0.6.0</central-publishing-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <central-publishing-plugin.version>0.9.0</central-publishing-plugin.version>
     </properties>
 
     <modules>
@@ -142,6 +146,13 @@
                 <groupId>org.springaicommunity</groupId>
                 <artifactId>mcp-annotations</artifactId>
                 <version>${mcp-annotations.version}</version>
+            </dependency>
+
+            <!-- Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring-framework.version}</version>
             </dependency>
 
             <!-- Testing -->

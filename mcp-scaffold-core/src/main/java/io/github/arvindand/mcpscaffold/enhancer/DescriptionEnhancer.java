@@ -15,6 +15,7 @@
  */
 package io.github.arvindand.mcpscaffold.enhancer;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import io.github.arvindand.mcpscaffold.config.DescriptionConfig;
@@ -48,8 +49,9 @@ public class DescriptionEnhancer {
     var desc = new StringBuilder();
 
     // Primary description from Javadoc or method name
-    if (config.includeJavadoc() && method.javadoc().isPresent()) {
-      desc.append(cleanJavadoc(method.javadoc().get()));
+    Optional<String> javadoc = method.javadoc();
+    if (config.includeJavadoc() && javadoc.isPresent()) {
+      desc.append(cleanJavadoc(javadoc.get()));
     } else if (config.parseMethodNames()) {
       desc.append(parseMethodName(method.name()));
     }
@@ -60,11 +62,15 @@ public class DescriptionEnhancer {
     }
 
     // Entity field information for repositories
-    if (config.includeEntityFields() && component.managedEntity().isPresent()) {
-      EntityInfo entity = component.managedEntity().get();
-      if (returnsEntity(method, entity)) {
-        desc.append(describeEntityFields(entity));
-      }
+    if (config.includeEntityFields()) {
+      component
+          .managedEntity()
+          .ifPresent(
+              entity -> {
+                if (returnsEntity(method, entity)) {
+                  desc.append(describeEntityFields(entity));
+                }
+              });
     }
 
     // Read-only marker

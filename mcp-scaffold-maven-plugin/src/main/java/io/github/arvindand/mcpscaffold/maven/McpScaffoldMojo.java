@@ -122,30 +122,8 @@ public class McpScaffoldMojo extends AbstractMojo {
       List<ComponentInfo> components = analyzer.analyzePackage(pkg, config.filter());
 
       for (ComponentInfo component : components) {
-        if (component.methods().isEmpty()) {
-          getLog().debug("Skipping " + component.className() + " (no methods)");
-          continue;
-        }
-
-        // Apply read-only detection
-        ComponentInfo enhancedComponent = applyReadOnlyDetection(component, readOnlyDetector);
-
-        try {
-          JavaFile javaFile = generator.generate(enhancedComponent);
-          javaFile.writeTo(outputDirectory.toPath());
-
-          String targetClassName = config.output().targetClassName(component.className());
-          getLog()
-              .info(
-                  "Generated: "
-                      + targetClassName
-                      + " ("
-                      + component.methods().size()
-                      + " methods)");
+        if (processComponent(component, readOnlyDetector, generator, config)) {
           totalGenerated++;
-        } catch (IOException e) {
-          throw new MojoExecutionException(
-              "Failed to write generated file for " + component.className(), e);
         }
       }
     }
@@ -182,7 +160,36 @@ public class McpScaffoldMojo extends AbstractMojo {
   private void validateConfig(ScaffoldConfig config) throws MojoExecutionException {
     if (config.scan().packages().isEmpty()) {
       throw new MojoExecutionException(
-          "No packages configured for scanning. Add packages to mcp-scaffold.yaml or create the configuration file.");
+          "No packages configured for scanning. Add packages to mcp-scaffold.yaml or create the"
+              + " configuration file.");
+    }
+  }
+
+  private boolean processComponent(
+      ComponentInfo component,
+      ReadOnlyDetector readOnlyDetector,
+      McpToolClassGenerator generator,
+      ScaffoldConfig config)
+      throws MojoExecutionException {
+    if (component.methods().isEmpty()) {
+      getLog().debug("Skipping " + component.className() + " (no methods)");
+      return false;
+    }
+
+    // Apply read-only detection
+    ComponentInfo enhancedComponent = applyReadOnlyDetection(component, readOnlyDetector);
+
+    try {
+      JavaFile javaFile = generator.generate(enhancedComponent);
+      javaFile.writeTo(outputDirectory.toPath());
+
+      String targetClassName = config.output().targetClassName(component.className());
+      getLog()
+          .info("Generated: " + targetClassName + " (" + component.methods().size() + " methods)");
+      return true;
+    } catch (IOException e) {
+      throw new MojoExecutionException(
+          "Failed to write generated file for " + component.className(), e);
     }
   }
 
