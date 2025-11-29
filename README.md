@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/arvindand/mcp-scaffold/actions/workflows/ci.yml/badge.svg)](https://github.com/arvindand/mcp-scaffold/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.arvindand/mcp-scaffold-maven-plugin.svg)](https://central.sonatype.com/artifact/io.github.arvindand/mcp-scaffold-maven-plugin)
 [![Java 21](https://img.shields.io/badge/Java-21-blue.svg)](https://openjdk.org/projects/jdk/21/)
 
 Generate Spring AI MCP tools from existing Spring Data repositories and services.
@@ -35,7 +36,7 @@ It analyzes your application's AST (Abstract Syntax Tree) to produce `@McpTool`-
 <plugin>
     <groupId>io.github.arvindand</groupId>
     <artifactId>mcp-scaffold-maven-plugin</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <executions>
         <execution>
             <goals>
