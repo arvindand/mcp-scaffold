@@ -34,7 +34,7 @@ MCP Scaffold analyzes your existing Spring Boot application and generates `@McpT
     <dependency>
         <groupId>org.springaicommunity</groupId>
         <artifactId>mcp-annotations</artifactId>
-        <version>0.7.0</version>
+        <version>0.8.0</version>
     </dependency>
     
     <!-- Spring AI MCP Server -->
@@ -49,7 +49,7 @@ MCP Scaffold analyzes your existing Spring Boot application and generates `@McpT
         <plugin>
             <groupId>io.github.arvindand</groupId>
             <artifactId>mcp-scaffold-maven-plugin</artifactId>
-            <version>0.1.1</version>
+            <version>0.1.2</version>
             <executions>
                 <execution>
                     <goals>
@@ -157,7 +157,7 @@ The [Petclinic example](mcp-scaffold-examples/petclinic-mcp/) is a complete work
 ./mvnw -pl mcp-scaffold-examples/petclinic-mcp spring-boot:run
 ```
 
-Then connect Claude Desktop or any MCP client to `http://localhost:8080/sse`.
+Then connect Claude Desktop or any MCP client to `http://localhost:8080/mcp`.
 
 **[Full example with testing instructions →](mcp-scaffold-examples/petclinic-mcp/README.md)**
 
@@ -166,7 +166,7 @@ Then connect Claude Desktop or any MCP client to `http://localhost:8080/sse`.
 - **Java 21** or later
 - **Maven 3.9+**
 - **Spring Boot 3.x** application
-- **Spring AI 1.1.0+** with MCP server starter
+- **Spring AI 1.1.2+** with MCP server starter
 
 ## Building from Source
 

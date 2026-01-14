@@ -18,7 +18,7 @@ Add the MCP Scaffold Maven plugin to your project's `pom.xml`:
         <plugin>
             <groupId>io.github.arvindand</groupId>
             <artifactId>mcp-scaffold-maven-plugin</artifactId>
-            <version>0.1.1</version>
+            <version>0.1.2</version>
             <executions>
                 <execution>
                     <goals>
@@ -41,7 +41,7 @@ Add Spring AI MCP server starter and the MCP annotations for the generated code:
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-bom</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -59,17 +59,9 @@ Add Spring AI MCP server starter and the MCP annotations for the generated code:
     <dependency>
         <groupId>org.springaicommunity</groupId>
         <artifactId>mcp-annotations</artifactId>
-        <version>0.7.0</version>
+        <version>0.8.0</version>
     </dependency>
 </dependencies>
-
-<repositories>
-    <repository>
-        <id>spring-milestones</id>
-        <name>Spring Milestones</name>
-        <url>https://repo.spring.io/milestone</url>
-    </repository>
-</repositories>
 ```
 
 ## Step 3: Generate Configuration

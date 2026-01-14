@@ -35,7 +35,7 @@ Or run directly:
 
 ### 2. Verify the Server is Running
 
-The MCP server starts on `http://localhost:8080` with SSE transport.
+The MCP server starts on `http://localhost:8080` with streamable HTTP transport.
 
 Check the health endpoint:
 
@@ -45,12 +45,11 @@ curl http://localhost:8080/actuator/health
 
 ## Testing the MCP Tools
 
-### SSE Endpoint
+### Streamable HTTP Endpoint
 
-The MCP server exposes tools via Server-Sent Events (SSE):
+The MCP server exposes tools via streamable HTTP:
 
-- **SSE Endpoint**: `http://localhost:8080/sse`
-- **Message Endpoint**: `http://localhost:8080/mcp/messages`
+- **MCP Endpoint**: `http://localhost:8080/mcp`
 
 ### Using Claude Desktop
 
@@ -60,7 +59,7 @@ Add this to your Claude Desktop configuration (`~/Library/Application Support/Cl
 {
   "mcpServers": {
     "petclinic": {
-      "url": "http://localhost:8080/sse"
+      "url": "http://localhost:8080/mcp"
     }
   }
 }
@@ -74,13 +73,13 @@ List available tools:
 
 ```bash
 # Initialize connection and list tools
-curl -N http://localhost:8080/sse
+curl -N http://localhost:8080/mcp
 ```
 
 ### Using httpie
 
 ```bash
-http --stream GET http://localhost:8080/sse
+http --stream GET http://localhost:8080/mcp
 ```
 
 ## Generated Tools

@@ -10,7 +10,7 @@ This document explains the internal architecture and processing pipeline of MCP 
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │              spring-ai-starter-mcp-server                 │   │
-│  │         (handles MCP protocol, SSE transport)             │   │
+│  │     (handles MCP protocol, streamable HTTP transport)     │   │
 │  └─────────────────────────┬────────────────────────────────┘   │
 │                            │                                     │
 │  ┌─────────────────────────▼────────────────────────────────┐   │

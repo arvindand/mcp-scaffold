@@ -6,7 +6,7 @@
 
     <groupId>io.github.arvindand</groupId>
     <artifactId>mcp-scaffold-parent</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.2</version>
     <packaging>pom</packaging>
 
     <name>MCP Scaffold</name>
@@ -44,7 +44,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Core dependencies - latest stable versions -->
-        <javaparser.version>3.27.1</javaparser.version>
+        <javaparser.version>3.28.0</javaparser.version>
         <javapoet.version>1.13.0</javapoet.version>
         <snakeyaml.version>2.5</snakeyaml.version>
 
@@ -54,31 +54,31 @@
         <maven-plugin-plugin.version>3.15.2</maven-plugin-plugin.version>
 
         <!-- Spring AI (compile-only reference) -->
-        <spring-ai.version>1.1.0</spring-ai.version>
+        <spring-ai.version>1.1.2</spring-ai.version>
 
         <!-- Spring AI Community MCP Annotations -->
-        <mcp-annotations.version>0.7.0</mcp-annotations.version>
+        <mcp-annotations.version>0.8.0</mcp-annotations.version>
 
-        <!-- Spring Framework (aligned with Spring Boot 3.5.8) -->
-        <spring-framework.version>6.2.14</spring-framework.version>
+        <!-- Spring Framework (aligned with Spring Boot 3.5.9) -->
+        <spring-framework.version>6.2.15</spring-framework.version>
 
         <!-- Testing -->
         <junit.version>5.12.2</junit.version>
         <assertj.version>3.27.6</assertj.version>
-        <mockito.version>5.18.0</mockito.version>
+        <mockito.version>5.21.0</mockito.version>
 
         <!-- Build plugins -->
         <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <maven-invoker-plugin.version>3.9.1</maven-invoker-plugin.version>
         <spotless-maven-plugin.version>3.1.0</spotless-maven-plugin.version>
-        <google-java-format.version>1.32.0</google-java-format.version>
+        <google-java-format.version>1.33.0</google-java-format.version>
 
         <!-- Publishing plugins -->
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <central-publishing-plugin.version>0.9.0</central-publishing-plugin.version>
+        <central-publishing-plugin.version>0.10.0</central-publishing-plugin.version>
     </properties>
 
     <modules>
