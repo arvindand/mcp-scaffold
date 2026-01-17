@@ -24,6 +24,20 @@ MCP Scaffold analyzes your existing Spring Boot application and generates `@McpT
 - **Read-only detection** — Automatically identifies safe operations
 - **Regeneratable** — Run again whenever your code changes
 
+## Who Should Use This
+
+MCP Scaffold is designed for:
+
+- **Spring Boot + Spring Data JPA applications** wanting to expose data to AI assistants
+- **Teams with existing repositories** that want quick MCP tool generation
+- **Read-heavy query workloads** where AI assistants need database access
+
+**Not currently supported:**
+
+- MongoDB, R2DBC, or other non-JPA data layers
+- Gradle projects (Maven only)
+- Custom business logic synthesis
+
 ## Quick Start
 
 ### 1. Add the plugin and dependencies
@@ -49,7 +63,7 @@ MCP Scaffold analyzes your existing Spring Boot application and generates `@McpT
         <plugin>
             <groupId>io.github.arvindand</groupId>
             <artifactId>mcp-scaffold-maven-plugin</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.3</version>
             <executions>
                 <execution>
                     <goals>
@@ -163,10 +177,20 @@ Then connect Claude Desktop or any MCP client to `http://localhost:8080/mcp`.
 
 ## Requirements
 
-- **Java 21** or later
-- **Maven 3.9+**
-- **Spring Boot 3.x** application
-- **Spring AI 1.1.2+** with MCP server starter
+| Component | Version | Notes |
+|-----------|---------|-------|
+| Java | 21+ | Required |
+| Maven | 3.9+ | Gradle not yet supported |
+| Spring Boot | 3.x | Tested with 3.2+ |
+| Spring AI | 1.1.2+ | Uses MCP server starter |
+| mcp-annotations | 0.8.0 | From spring-ai-community |
+
+## Current Limitations
+
+- **Maven only** — Gradle plugin support is planned
+- **JPA repositories only** — MongoDB, R2DBC, custom DAOs not supported
+- **No custom method synthesis** — Only wraps existing repository/service methods
+- **Java 21+ only** — No Java 17 support currently
 
 ## Building from Source
 
@@ -175,6 +199,20 @@ git clone https://github.com/arvindand/mcp-scaffold.git
 cd mcp-scaffold
 ./mvnw clean install
 ```
+
+## Security Considerations
+
+**Important:** Generated MCP tools provide direct access to your data layer.
+
+- **No built-in authentication** — Tools bypass Spring Security by default
+- **Full read/write access** — AI assistants can call any exposed repository method
+- **Use `exclude-methods`** — Filter dangerous operations like `deleteAll`, `save`, `flush`
+
+For production use:
+
+- Only expose read-only repositories to AI
+- Use the `filter.exclude-methods` config to block write operations
+- Consider wrapping the MCP server with authentication middleware
 
 ## License
 

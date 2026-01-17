@@ -22,7 +22,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * Main configuration for MCP Scaffold.
@@ -60,7 +62,7 @@ public record ScaffoldConfig(
   /** Loads configuration from a YAML file. */
   public static ScaffoldConfig fromYaml(Path path) throws IOException {
     try (InputStream is = Files.newInputStream(path)) {
-      Yaml yaml = new Yaml();
+      Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
       Map<String, Object> root = yaml.load(is);
 
       Map<String, Object> mcp = getMap(root, "mcp");

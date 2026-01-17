@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ast.CompilationUnit;
@@ -58,6 +61,8 @@ import io.github.arvindand.mcpscaffold.model.ParamInfo;
  */
 public class SourceAnalyzer {
 
+  private static final Logger log = LoggerFactory.getLogger(SourceAnalyzer.class);
+
   private static final String JAVA_EXTENSION = ".java";
   private static final String MODEL_PACKAGE = "model";
   private static final String REPOSITORY_PACKAGE = "repository";
@@ -87,7 +92,7 @@ public class SourceAnalyzer {
               .flatMap(Optional::stream)
               .forEach(components::add);
         } catch (IOException e) {
-          // Log and continue
+          log.debug("Failed to list files in package directory: {}", packagePath, e);
         }
       }
     }
@@ -103,7 +108,7 @@ public class SourceAnalyzer {
         return result.getResult().flatMap(cu -> analyzeCompilationUnit(cu, filter));
       }
     } catch (IOException e) {
-      // Log and return empty
+      log.debug("Failed to parse source file: {}", sourceFile, e);
     }
     return Optional.empty();
   }
@@ -216,7 +221,7 @@ public class SourceAnalyzer {
                 importMap.putIfAbsent(simpleName, packageName + "." + simpleName);
               });
     } catch (IOException e) {
-      // Ignore
+      log.debug("Failed to scan Java files in directory: {}", directory, e);
     }
   }
 
@@ -448,7 +453,7 @@ public class SourceAnalyzer {
                 .orElse(List.of());
           }
         } catch (IOException e) {
-          // Ignore
+          log.debug("Failed to parse enum file: {}", filePath, e);
         }
       }
     }
@@ -593,7 +598,7 @@ public class SourceAnalyzer {
                         .map(c -> extractEntityInfo(c, entityCu)));
       }
     } catch (IOException e) {
-      // Continue searching
+      log.debug("Failed to parse entity file: {}", entityPath, e);
     }
     return Optional.empty();
   }
@@ -618,10 +623,10 @@ public class SourceAnalyzer {
     boolean isId = hasAnnotation(field, "Id") || hasAnnotation(field, "EmbeddedId");
     boolean nullable =
         !hasAnnotation(field, NOT_NULL_ANNOTATION)
-            && !hasAnnotation(field, "Column")
-            && field.getAnnotations().stream()
-                .filter(a -> a.getNameAsString().equals("Column"))
-                .noneMatch(a -> a.toString().contains("nullable = false"));
+            && (!hasAnnotation(field, "Column")
+                || field.getAnnotations().stream()
+                    .filter(a -> a.getNameAsString().equals("Column"))
+                    .noneMatch(a -> a.toString().contains("nullable = false")));
 
     List<String> constraints =
         field.getAnnotations().stream()
