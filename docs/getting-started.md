@@ -5,7 +5,7 @@ This guide walks you through setting up MCP Scaffold in your Spring Boot project
 ## Prerequisites
 
 - Java 21 or later
-- Maven 3.9+
+- Maven 3.9.16+
 - An existing Spring Boot application with Spring Data JPA repositories
 
 ## Step 1: Add the Plugin
@@ -18,7 +18,7 @@ Add the MCP Scaffold Maven plugin to your project's `pom.xml`:
         <plugin>
             <groupId>io.github.arvindand</groupId>
             <artifactId>mcp-scaffold-maven-plugin</artifactId>
-            <version>0.1.3</version>
+            <version>0.1.4</version>
             <executions>
                 <execution>
                     <goals>
@@ -41,7 +41,7 @@ Add Spring AI MCP server starter and the MCP annotations for the generated code:
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-bom</artifactId>
-            <version>1.1.2</version>
+            <version>1.1.8</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -59,7 +59,7 @@ Add Spring AI MCP server starter and the MCP annotations for the generated code:
     <dependency>
         <groupId>org.springaicommunity</groupId>
         <artifactId>mcp-annotations</artifactId>
-        <version>0.8.0</version>
+        <version>0.9.0</version>
     </dependency>
 </dependencies>
 ```
@@ -76,7 +76,7 @@ This will generate `mcp-scaffold-suggested.yaml` with:
 
 - Detected packages containing Repositories and Services
 - Suggested "High Value" components to include
-- Dangerous methods (like `delete`, `drop`) excluded by default
+- Methods without a read-only hint (including service methods) excluded by default
 
 Review the file, make any necessary adjustments, and rename it to `mcp-scaffold.yaml`:
 

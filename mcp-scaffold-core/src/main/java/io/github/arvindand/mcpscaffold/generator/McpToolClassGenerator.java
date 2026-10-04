@@ -15,8 +15,6 @@
  */
 package io.github.arvindand.mcpscaffold.generator;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +109,6 @@ public class McpToolClassGenerator {
   private AnnotationSpec generatedAnnotation() {
     return AnnotationSpec.builder(Generated.class)
         .addMember("value", "$S", "io.github.arvindand.mcpscaffold")
-        .addMember("date", "$S", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
         .addMember("comments", "$S", "MCP Scaffold - Spring AI MCP Tool Generator")
         .build();
   }

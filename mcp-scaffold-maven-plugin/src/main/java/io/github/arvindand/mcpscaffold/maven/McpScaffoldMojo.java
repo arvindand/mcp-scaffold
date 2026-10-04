@@ -111,7 +111,7 @@ public class McpScaffoldMojo extends AbstractMojo {
     getLog().info("Scanning source roots: " + sourceRoots);
 
     SourceAnalyzer analyzer = new SourceAnalyzer(sourceRoots);
-    ReadOnlyDetector readOnlyDetector = new ReadOnlyDetector();
+    ReadOnlyDetector readOnlyDetector = new ReadOnlyDetector(config.readOnly());
     McpToolClassGenerator generator = new McpToolClassGenerator(config);
 
     int totalGenerated = 0;

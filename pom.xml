@@ -6,7 +6,7 @@
 
     <groupId>io.github.arvindand</groupId>
     <artifactId>mcp-scaffold-parent</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
     <packaging>pom</packaging>
 
     <name>MCP Scaffold</name>
@@ -44,44 +44,45 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Core dependencies - latest stable versions -->
-        <javaparser.version>3.28.0</javaparser.version>
+        <javaparser.version>3.28.2</javaparser.version>
         <javapoet.version>1.13.0</javapoet.version>
-        <snakeyaml.version>2.5</snakeyaml.version>
+        <snakeyaml.version>2.7</snakeyaml.version>
 
         <!-- Maven plugin dependencies -->
-        <maven-plugin-api.version>3.9.11</maven-plugin-api.version>
-        <maven-plugin-annotations.version>3.15.2</maven-plugin-annotations.version>
-        <maven-plugin-plugin.version>3.15.2</maven-plugin-plugin.version>
+        <maven-plugin-api.version>3.9.16</maven-plugin-api.version>
+        <maven-plugin-annotations.version>3.16.0</maven-plugin-annotations.version>
+        <maven-plugin-plugin.version>3.16.0</maven-plugin-plugin.version>
 
         <!-- Spring AI (compile-only reference) -->
-        <spring-ai.version>1.1.2</spring-ai.version>
+        <spring-ai.version>1.1.8</spring-ai.version>
 
         <!-- Spring AI Community MCP Annotations -->
-        <mcp-annotations.version>0.8.0</mcp-annotations.version>
+        <mcp-annotations.version>0.9.0</mcp-annotations.version>
 
-        <!-- Spring Framework (aligned with Spring Boot 3.5.9) -->
-        <spring-framework.version>6.2.15</spring-framework.version>
+        <!-- Spring Framework (aligned with Spring Boot 3.5.16) -->
+        <spring-framework.version>6.2.19</spring-framework.version>
 
         <!-- Logging -->
-        <slf4j.version>2.0.17</slf4j.version>
+        <slf4j.version>2.0.20</slf4j.version>
 
         <!-- Testing -->
-        <junit.version>5.12.2</junit.version>
-        <assertj.version>3.27.6</assertj.version>
-        <mockito.version>5.21.0</mockito.version>
+        <junit.version>5.14.4</junit.version>
+        <assertj.version>3.27.7</assertj.version>
+        <mockito.version>5.24.0</mockito.version>
 
         <!-- Build plugins -->
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <maven-invoker-plugin.version>3.9.1</maven-invoker-plugin.version>
-        <spotless-maven-plugin.version>3.1.0</spotless-maven-plugin.version>
-        <google-java-format.version>1.33.0</google-java-format.version>
+        <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+        <maven-invoker-plugin.version>3.10.1</maven-invoker-plugin.version>
+        <spotless-maven-plugin.version>3.10.3</spotless-maven-plugin.version>
+        <!-- 1.37.0 fails with Spotless 3.10.3 on Java 21; 1.36.1 is verified compatible. -->
+        <google-java-format.version>1.36.1</google-java-format.version>
 
         <!-- Publishing plugins -->
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <central-publishing-plugin.version>0.10.0</central-publishing-plugin.version>
+        <central-publishing-plugin.version>0.11.0</central-publishing-plugin.version>
     </properties>
 
     <modules>

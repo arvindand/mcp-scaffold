@@ -14,7 +14,7 @@ This analyzes your codebase and generates a `mcp-scaffold-suggested.yaml` file w
 
 - Package discovery
 - Component whitelisting
-- Dangerous method exclusion
+- Exclusion suggestions for methods without a read-only hint
 
 ### Filtering Suggestions
 
@@ -94,7 +94,7 @@ Controls which classes and methods are included in generation.
 |----------|------|---------|-------------|
 | `include-patterns` | List | `["*Repository", "*Service"]` | Glob patterns for classes to include |
 | `exclude-patterns` | List | `["*Internal*", "*Test*"]` | Glob patterns for classes to exclude |
-| `exclude-methods` | List | `["flush", "clear", "saveAndFlush"]` | Method names to exclude |
+| `exclude-methods` | List | `["flush", "clear", "saveAndFlush"]` | Method names to exclude across all classes |
 
 ### `descriptions`
 
@@ -129,11 +129,21 @@ Controls tool naming conventions.
 
 ### `read-only`
 
-Controls read-only operation detection.
+Controls read-only hints inferred from recognized Spring Data query conventions. These hints
+are not a guarantee of safety or a method filter.
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `detect-automatically` | Boolean | `true` | Auto-detect read-only methods |
+| `detect-automatically` | Boolean | `true` | Infer read-only hints for repository query methods |
+
+When disabled, generated descriptions contain no inferred read-only markers. The `suggest`
+goal reads this setting from the existing `mcp-scaffold.yaml` (or `-Dmcp.scaffold.configFile`),
+preserves it in its output, and suggests excluding every method because none has an inferred
+read-only hint. Suggestions require review before use; disabling hints does not disable tools.
+
+Method exclusions apply by name across all classes. If a service and a repository both have
+`findById`, suggesting that name for the unmarked service also excludes the repository's query
+method. Review shared names in the suggested list before using it.
 
 ### `annotations`
 
@@ -166,7 +176,7 @@ The plugin also accepts parameters directly in `pom.xml`:
 <plugin>
     <groupId>io.github.arvindand</groupId>
     <artifactId>mcp-scaffold-maven-plugin</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
     <configuration>
         <configFile>${project.basedir}/custom-config.yaml</configFile>
         <outputDirectory>${project.build.directory}/generated-sources/mcp</outputDirectory>

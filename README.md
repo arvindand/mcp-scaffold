@@ -21,7 +21,7 @@ MCP Scaffold analyzes your existing Spring Boot application and generates `@McpT
 
 - **Zero manual annotation** — Works with your existing code, no changes required
 - **Smart descriptions** — Auto-generated from Javadoc, method names, and entity metadata
-- **Read-only detection** — Automatically identifies safe operations
+- **Read-only hints** — Recognizes common Spring Data query conventions
 - **Regeneratable** — Run again whenever your code changes
 
 ## Who Should Use This
@@ -48,7 +48,7 @@ MCP Scaffold is designed for:
     <dependency>
         <groupId>org.springaicommunity</groupId>
         <artifactId>mcp-annotations</artifactId>
-        <version>0.8.0</version>
+        <version>0.9.0</version>
     </dependency>
     
     <!-- Spring AI MCP Server -->
@@ -63,7 +63,7 @@ MCP Scaffold is designed for:
         <plugin>
             <groupId>io.github.arvindand</groupId>
             <artifactId>mcp-scaffold-maven-plugin</artifactId>
-            <version>0.1.3</version>
+            <version>0.1.4</version>
             <executions>
                 <execution>
                     <goals>
@@ -134,6 +134,10 @@ The generated descriptions include:
 - Enum values for enum parameters
 - Read-only markers
 
+Read-only markers are hints for review, not guarantees about side effects. Service method names
+alone do not qualify; for example, `getOrCreateCart` is not marked read-only. Review the
+implementation before exposing it to an AI client.
+
 **[See the petclinic example →](mcp-scaffold-examples/petclinic-mcp/)**
 
 ## Configuration
@@ -180,10 +184,10 @@ Then connect Claude Desktop or any MCP client to `http://localhost:8080/mcp`.
 | Component | Version | Notes |
 |-----------|---------|-------|
 | Java | 21+ | Required |
-| Maven | 3.9+ | Gradle not yet supported |
+| Maven | 3.9.16+ | Gradle not yet supported |
 | Spring Boot | 3.x | Tested with 3.2+ |
-| Spring AI | 1.1.2+ | Uses MCP server starter |
-| mcp-annotations | 0.8.0 | From spring-ai-community |
+| Spring AI | 1.1.x | Tested with 1.1.8; uses MCP server starter |
+| mcp-annotations | 0.9.0 | From spring-ai-community |
 
 ## Current Limitations
 

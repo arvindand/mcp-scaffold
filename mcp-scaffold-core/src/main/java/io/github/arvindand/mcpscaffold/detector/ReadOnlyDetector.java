@@ -15,67 +15,44 @@
  */
 package io.github.arvindand.mcpscaffold.detector;
 
-import java.util.Set;
-
+import io.github.arvindand.mcpscaffold.config.ReadOnlyConfig;
 import io.github.arvindand.mcpscaffold.model.ComponentInfo;
 import io.github.arvindand.mcpscaffold.model.ComponentType;
 import io.github.arvindand.mcpscaffold.model.MethodInfo;
 
 /**
- * Detects whether methods are read-only operations.
+ * Infers read-only hints from Spring Data query conventions.
  *
- * <p>This is particularly important for Spring Data repositories where read-only detection is
- * reliable based on method naming conventions.
+ * <p>A hint is not a guarantee that an implementation has no side effects. Arbitrary service method
+ * names are not sufficient evidence to infer read-only behavior.
  *
  * @author Arvind Menon
  */
 public class ReadOnlyDetector {
 
-  private static final Set<String> READ_PREFIXES =
-      Set.of("find", "get", "read", "query", "search", "stream", "count", "exists", "is", "has");
+  private final ReadOnlyConfig config;
 
-  private static final Set<String> WRITE_PREFIXES =
-      Set.of(
-          "save", "insert", "create", "add", "persist", "update", "modify", "set", "change",
-          "delete", "remove", "drop", "clear", "flush");
+  public ReadOnlyDetector() {
+    this(ReadOnlyConfig.defaults());
+  }
+
+  public ReadOnlyDetector(ReadOnlyConfig config) {
+    this.config = config;
+  }
 
   /**
-   * Determines if a method is read-only.
+   * Determines if a method can receive a read-only hint.
    *
    * @param method the method to check
    * @param component the component containing the method
-   * @return true if the method is read-only
+   * @return true if automatic detection is enabled and a repository query convention matches
    */
   public boolean isReadOnly(MethodInfo method, ComponentInfo component) {
-    // @Modifying annotation indicates a write operation
-    if (hasModifyingAnnotation(method)) {
+    if (!config.detectAutomatically() || hasModifyingAnnotation(method) || method.returnsVoid()) {
       return false;
     }
 
-    String name = method.name().toLowerCase();
-
-    // Check write prefixes first (higher priority)
-    if (startsWithAny(name, WRITE_PREFIXES)) {
-      return false;
-    }
-
-    // Check read prefixes
-    if (startsWithAny(name, READ_PREFIXES)) {
-      return true;
-    }
-
-    // void return type typically indicates a write operation
-    if (method.returnsVoid()) {
-      return false;
-    }
-
-    // For repositories, use Spring Data method pattern matching
-    if (component.type() == ComponentType.REPOSITORY) {
-      return isSpringDataReadMethod(name);
-    }
-
-    // For services, default to write (conservative)
-    return false;
+    return component.type() == ComponentType.REPOSITORY && isSpringDataReadMethod(method.name());
   }
 
   /** Creates a new MethodInfo with the read-only flag set based on detection. */
@@ -95,18 +72,12 @@ public class ReadOnlyDetector {
         .anyMatch(a -> a.equals("Modifying") || a.endsWith(".Modifying"));
   }
 
-  private boolean startsWithAny(String name, Set<String> prefixes) {
-    return prefixes.stream().anyMatch(name::startsWith);
-  }
-
   private boolean isSpringDataReadMethod(String name) {
     // Spring Data derived query patterns
-    return name.matches("^(find|read|get|query|search|stream|count|exists)by.*")
-        || name.equals("findall")
-        || name.equals("findbyid")
+    return name.matches("^(find|read|get|query|search|stream|count|exists)By[A-Z].*")
+        || name.equals("findAll")
         || name.equals("count")
-        || name.equals("existsbyid")
-        || name.equals("getone")
-        || name.equals("getbyid");
+        || name.equals("getOne")
+        || name.equals("getReferenceById");
   }
 }

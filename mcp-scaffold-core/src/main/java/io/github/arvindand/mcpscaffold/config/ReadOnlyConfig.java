@@ -16,9 +16,9 @@
 package io.github.arvindand.mcpscaffold.config;
 
 /**
- * Configuration for read-only detection.
+ * Configuration for read-only hint detection.
  *
- * @param detectAutomatically whether to automatically detect read-only methods
+ * @param detectAutomatically whether to infer read-only hints from repository query conventions
  * @author Arvind Menon
  */
 public record ReadOnlyConfig(boolean detectAutomatically) {

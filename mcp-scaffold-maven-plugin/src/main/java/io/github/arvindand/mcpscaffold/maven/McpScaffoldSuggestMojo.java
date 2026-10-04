@@ -38,6 +38,7 @@ import org.apache.maven.project.MavenProject;
 
 import io.github.arvindand.mcpscaffold.analyzer.SourceAnalyzer;
 import io.github.arvindand.mcpscaffold.config.FilterConfig;
+import io.github.arvindand.mcpscaffold.config.ScaffoldConfig;
 import io.github.arvindand.mcpscaffold.detector.ReadOnlyDetector;
 import io.github.arvindand.mcpscaffold.model.ComponentInfo;
 import io.github.arvindand.mcpscaffold.model.MethodInfo;
@@ -59,6 +60,12 @@ public class McpScaffoldSuggestMojo extends AbstractMojo {
   /** The Maven project. */
   @Parameter(defaultValue = "${project}", readonly = true, required = true)
   private MavenProject project;
+
+  /** Existing configuration, used to honor the read-only detection policy. */
+  @Parameter(
+      property = "mcp.scaffold.configFile",
+      defaultValue = "${project.basedir}/mcp-scaffold.yaml")
+  private File configFile;
 
   /** Output file for the suggested configuration. */
   @Parameter(
@@ -118,8 +125,9 @@ public class McpScaffoldSuggestMojo extends AbstractMojo {
     List<String> suggestedIncludes =
         validComponents.stream().map(ComponentInfo::className).sorted().toList();
 
-    // 4. Detect dangerous methods
-    ReadOnlyDetector detector = new ReadOnlyDetector();
+    // 4. Suggest excluding methods without a read-only hint; this is not a safety guarantee.
+    ScaffoldConfig config = loadConfig();
+    ReadOnlyDetector detector = new ReadOnlyDetector(config.readOnly());
     Set<String> dangerousMethods = new HashSet<>();
 
     for (ComponentInfo component : validComponents) {
@@ -132,12 +140,27 @@ public class McpScaffoldSuggestMojo extends AbstractMojo {
 
     // 5. Generate YAML
     try {
-      generateYaml(suggestedPackages, suggestedIncludes, dangerousMethods);
+      generateYaml(
+          suggestedPackages,
+          suggestedIncludes,
+          dangerousMethods,
+          config.readOnly().detectAutomatically());
       getLog().info("Generated suggested configuration: " + suggestFile);
       getLog().info("Review this file and rename it to mcp-scaffold.yaml to use it.");
     } catch (IOException e) {
       throw new MojoExecutionException("Failed to write suggestion file", e);
     }
+  }
+
+  private ScaffoldConfig loadConfig() throws MojoExecutionException {
+    if (configFile.exists()) {
+      try {
+        return ScaffoldConfig.fromYaml(configFile.toPath());
+      } catch (IOException e) {
+        throw new MojoExecutionException("Failed to load configuration from " + configFile, e);
+      }
+    }
+    return ScaffoldConfig.defaults();
   }
 
   private List<ComponentInfo> discoverComponents(List<Path> sourceRoots, Set<String> packages) {
@@ -182,7 +205,10 @@ public class McpScaffoldSuggestMojo extends AbstractMojo {
   }
 
   private void generateYaml(
-      Set<String> packages, List<String> includes, Set<String> dangerousMethods)
+      Set<String> packages,
+      List<String> includes,
+      Set<String> dangerousMethods,
+      boolean detectAutomatically)
       throws IOException {
     try (PrintWriter writer = new PrintWriter(new FileWriter(suggestFile))) {
       writer.println("mcp:");
@@ -218,7 +244,7 @@ public class McpScaffoldSuggestMojo extends AbstractMojo {
       writer.println();
 
       writer.println("    read-only:");
-      writer.println("      detect-automatically: true");
+      writer.println("      detect-automatically: " + detectAutomatically);
 
       writer.println("    annotations:");
       writer.println("      tool-annotation: org.springaicommunity.mcp.annotation.McpTool");

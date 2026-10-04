@@ -43,12 +43,15 @@ The `SourceAnalyzer` uses JavaParser to:
 
 ### 2. Read-Only Detection
 
-The `ReadOnlyDetector` determines if methods are read-only based on:
+The `ReadOnlyDetector` adds read-only hints for recognized Spring Data query method patterns,
+such as `findByName`, `existsById`, `findAll`, and `count`. A `void` return type or `@Modifying`
+annotation prevents a hint. Arbitrary repository methods and service methods are left unmarked;
+a prefix like `get` cannot establish whether `getOrCreateCart` changes state.
 
-- Method name prefixes (`find`, `get`, `count` = read; `save`, `delete` = write)
-- `@Modifying` annotation
-- Return type (`void` usually indicates write)
-- Spring Data query method patterns
+These conventions do not prove that a custom implementation has no side effects. Annotation
+arguments such as `@Transactional(readOnly = true)` are not analyzed, and transaction settings
+would not prove purity either. Review implementations and tool exposure yourself. Set
+`read-only.detect-automatically: false` to disable inference in both generation and suggestions.
 
 ### 3. Description Enhancement
 
