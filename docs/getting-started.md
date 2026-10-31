@@ -18,7 +18,7 @@ Add the MCP Scaffold Maven plugin to your project's `pom.xml`:
         <plugin>
             <groupId>io.github.arvindand</groupId>
             <artifactId>mcp-scaffold-maven-plugin</artifactId>
-            <version>0.1.4</version>
+            <version>0.1.5</version>
             <executions>
                 <execution>
                     <goals>

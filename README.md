@@ -63,7 +63,7 @@ MCP Scaffold is designed for:
         <plugin>
             <groupId>io.github.arvindand</groupId>
             <artifactId>mcp-scaffold-maven-plugin</artifactId>
-            <version>0.1.4</version>
+            <version>0.1.5</version>
             <executions>
                 <execution>
                     <goals>
@@ -139,6 +139,13 @@ alone do not qualify; for example, `getOrCreateCart` is not marked read-only. Re
 implementation before exposing it to an AI client.
 
 **[See the petclinic example →](mcp-scaffold-examples/petclinic-mcp/)**
+
+## Spring AI 2.x
+
+The existing annotation configuration also supports Spring AI 2.x's new packages.
+See the [tested configuration](docs/configuration.md#annotations). Verification
+builds a generated Boot 4 / Spring AI 2 server and calls its tool over MCP STDIO;
+legacy annotation defaults remain available.
 
 ## Configuration
 

@@ -1,0 +1,5 @@
+File generated = new File(basedir, "target/generated-sources/mcp/com/example/mcp/SimpleServiceMcpTools.java")
+assert generated.exists()
+assert generated.text.contains("org.springframework.ai.mcp.annotation.McpTool")
+assert new File(basedir, "target/classes/com/example/mcp/SimpleServiceMcpTools.class").exists()
+assert new File(basedir, "target/failsafe-reports/TEST-com.example.GeneratedToolIT.xml").exists()
