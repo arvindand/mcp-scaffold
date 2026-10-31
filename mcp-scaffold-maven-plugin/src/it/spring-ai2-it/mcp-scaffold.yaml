@@ -1,0 +1,9 @@
+mcp:
+  scaffold:
+    scan:
+      packages: [com.example]
+    naming:
+      include-entity-name: false
+    annotations:
+      tool-annotation: org.springframework.ai.mcp.annotation.McpTool
+      param-annotation: org.springframework.ai.mcp.annotation.McpToolParam

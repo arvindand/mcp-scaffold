@@ -158,6 +158,29 @@ Configures the annotation classes used in generated code. This allows adaptation
 | `param-description-attribute` | String | `description` | Attribute name for parameter description |
 | `param-required-attribute` | String | `required` | Attribute name for required flag |
 
+**Spring AI 2.x**
+
+For Spring Boot 4 / Spring AI 2, use Spring AI's built-in annotations rather
+than the legacy community artifact:
+
+```yaml
+mcp:
+  scaffold:
+    annotations:
+      tool-annotation: org.springframework.ai.mcp.annotation.McpTool
+      param-annotation: org.springframework.ai.mcp.annotation.McpToolParam
+```
+
+Use `org.springframework.ai:spring-ai-starter-mcp-server` (or the matching
+web transport starter) with your Spring AI 2.x BOM. Remove the direct
+`org.springaicommunity:mcp-annotations` dependency. Annotation scanning is
+provided by the starter. The default configuration retains the legacy package
+for existing Spring AI 1.x projects.
+
+`./mvnw clean verify` includes a Boot 4.1.2 / Spring AI 2.0.2 fixture that generates
+and compiles a wrapper, starts the packaged server, lists its tool and calls it
+through MCP STDIO. The legacy compile fixture also runs.
+
 **Example: Using custom annotations**
 
 ```yaml
@@ -176,7 +199,7 @@ The plugin also accepts parameters directly in `pom.xml`:
 <plugin>
     <groupId>io.github.arvindand</groupId>
     <artifactId>mcp-scaffold-maven-plugin</artifactId>
-    <version>0.1.4</version>
+    <version>0.1.5</version>
     <configuration>
         <configFile>${project.basedir}/custom-config.yaml</configFile>
         <outputDirectory>${project.build.directory}/generated-sources/mcp</outputDirectory>
